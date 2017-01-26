@@ -16,7 +16,7 @@ api = tweepy.API(auth)
 
 def content_hub_crawl(url):
     print('CRAWL-URL: {}'.format(url))
-    resp = requests.post('http://localhost:8192/api/content-hub/crawl', data={'url': url})
+    resp = requests.post('http://localhost:2224/api/content-hub/crawl', data={'url': url})
     doc = resp.json()
     return doc
 

@@ -51,7 +51,7 @@ def html_extract(url):
 
 def content_hub_crawl(url):
     print('CRAWL-URL: {}'.format(url))
-    resp = requests.post('http://localhost:8192/api/content-hub/crawl', data={'url': url})
+    resp = requests.post('http://localhost:2224/api/content-hub/crawl', data={'url': url})
     doc = resp.json()
     return doc
 
@@ -68,7 +68,7 @@ def get_twitter_post_items(content_source, max_age_days=5):
     def get_post_items_from_tweet_links(tweets):
         results = []
         for tweet in tweets:
-            print(tweet.text)
+            print('tweet: {}'.format(tweet.text))
             favorite_count = tweet.favorite_count
             retweet_count = tweet.retweet_count
 
@@ -90,17 +90,18 @@ def get_twitter_post_items(content_source, max_age_days=5):
     api = tweepy.API(auth)
 
     def get_tweets():
-        if True:
+        if is_hashtag:
             _tweets = api.search(
-                q='{}'.format(content_source.search),
+                q='{} filter:links'.format(content_source.search),
                 lang='en',
                 result_type='popular',  # options: mixed, popular, recent
                 wait_on_rate_limit=True,
                 rpp=99)
         else:
+            print('SCREEN-NAME: {}'.format(content_source.search))
             _tweets = api.user_timeline(
                 screen_name=content_source.search[1:],  # trim the @prefix of user names
-                count=200,
+                count=99,
                 exclude_replies=True,
                 include_rts=True,
                 wait_on_rate_limit=True)
@@ -119,13 +120,19 @@ def get_twitter_post_items(content_source, max_age_days=5):
     return post_items
 
 
-def main():
-    source = ContentSource()
-    source.search = '#HealthTalk OR #nurses OR #doctors20 filter:links'
-    post_items = get_twitter_post_items(source)
+def crawl_post_items(post_items):
     if post_items:
         for post_item in post_items:
             check = content_hub_crawl(post_item.url)
+
+def main():
+    users = ['@kejames', '@vmontori', '@greg_folkers',  '@DianeEMeier']
+
+    for user in users:
+        source = ContentSource()
+        source.search = user
+        post_items = get_twitter_post_items(source)
+        crawl_post_items(post_items)
 
 
 if __name__ == '__main__':
