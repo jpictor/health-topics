@@ -8,6 +8,8 @@ consumer_key = 'EXXJ3ygv659jwUoZuoBvuPZ7H'
 consumer_secret = 'ZsryqsdCIowimKA1Jv46a3OXcJ8QUohInNZoCgHAzfn6UKjqJo'
 access_token = '2195427973-6AkH2lhVbuBKst3v4xh9MH0nvSBs9htO7xs55Kj'
 access_token_secret = 'S1jqpQLCJZFwQn5D2O7GcEtc8k640adbxqaLyPqZAU3v4'
+content_hub_url = 'https://pictorlabs.com'
+
 
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
@@ -16,7 +18,7 @@ api = tweepy.API(auth)
 
 def content_hub_crawl(url):
     print('CRAWL-URL: {}'.format(url))
-    resp = requests.post('http://localhost:2224/api/content-hub/crawl', data={'url': url})
+    resp = requests.post('{}/api/content-hub/crawl'.format(url), data={'url': url})
     doc = resp.json()
     return doc
 

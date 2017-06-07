@@ -1,15 +1,17 @@
+import os
 import json
 import tweepy
 import pydash
 import requests
-
+from dotenv import load_dotenv, find_dotenv
+load_dotenv(find_dotenv())
 
 class ApiConfig(object):
     def __init__(self):
-        self.consumer_key = 'EXXJ3ygv659jwUoZuoBvuPZ7H'
-        self.consumer_secret = 'ZsryqsdCIowimKA1Jv46a3OXcJ8QUohInNZoCgHAzfn6UKjqJo'
-        self.access_token = '2195427973-6AkH2lhVbuBKst3v4xh9MH0nvSBs9htO7xs55Kj'
-        self.access_token_secret = 'S1jqpQLCJZFwQn5D2O7GcEtc8k640adbxqaLyPqZAU3v4'
+        self.consumer_key = os.environ['TWITTER_CONSUMER_KEY']
+        self.consumer_secret = os.environ['TWITTER_CONSUMER_SECRET']
+        self.access_token = os.environ['TWITTER_ACCESS_TOKEN']
+        self.access_token_secret = os.environ['TWITTER_TOKEN_SECRET']
 
 
 class ContentSource(object):
@@ -25,22 +27,19 @@ class PostItem(object):
         self.created_at = created_at
         self.score = score
 
-
 def single_space(string):
     while '  ' in string:
         string = string.replace('  ', ' ')
     return string
-
 
 def clean_text(text):
     text = text.replace('\n', ' ')
     text = single_space(text)
     return text
 
-
 def html_extract(url):
     print('HTML-EXTRACT-URL: {}'.format(url))
-    resp = requests.get('http://localhost:8192/api/url-extract/html_extract', params={'url': url})
+    resp = requests.get('{URL_EXTRACT_URL}/api/url-extract/html_extract'.format(**os.environ), params={'url': url})
     doc = resp.json()
     doc['text'] = clean_text(doc.get('text', ''))
     print(doc.keys())
@@ -48,13 +47,11 @@ def html_extract(url):
     print('HTML-EXTRACT-URL-TEXT: {text}'.format(**doc))
     return doc
 
-
 def content_hub_crawl(url):
     print('CRAWL-URL: {}'.format(url))
-    resp = requests.post('http://localhost:2224/api/content-hub/crawl', data={'url': url})
+    resp = requests.post('{CONTENT_HUB_URL}/api/content-hub/crawl'.format(**os.environ)., data={'url': url})
     doc = resp.json()
     return doc
-
 
 def get_twitter_post_items(content_source, max_age_days=5):
     def log_info(x):
