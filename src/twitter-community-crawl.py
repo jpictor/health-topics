@@ -28,7 +28,6 @@ class User(object):
         self.user = twitter_api.get_user(user_lookup_id)
         print(dir(self.user))
         print(self.user)
-
         self.followers = []
         self.following = []
 

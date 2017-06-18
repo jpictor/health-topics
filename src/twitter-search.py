@@ -119,7 +119,7 @@ def get_twitter_post_items(content_source, max_age_days=5):
 def crawl_post_items(post_items):
     if post_items:
         for post_item in post_items:
-            #check = content_hub_crawl(post_item.url)
+            check = content_hub_crawl(post_item.url)
             print(post_item.url)
 
 def main():

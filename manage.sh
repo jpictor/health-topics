@@ -20,7 +20,7 @@ export SERVICE_ROOT="${SCRIPT_PATH}"
 export PYTHON=python
 
 ## add app/ directory to PYTHONPATH
-export PYTHONPATH=${SERVICE_ROOT}/app
+export PYTHONPATH=${SERVICE_ROOT}/src
 
 ## build virtual python environment
 function build_vpython {
@@ -91,21 +91,19 @@ case "$1" in
         shift 1
         exec ${PYTHON} "$@"
 	      ;;
-    pg2json)
+    twitter-search)
         activate_vpython
         shift 1
-        exec ${PYTHON} app/pg2json.py "$@"
+        exec ${PYTHON} src/twitter-search.py "$@"
         ;;
-    es2json)
+    twitter-listen)
         activate_vpython
         shift 1
-        exec ${PYTHON} app/es2json.py "$@"
+        exec ${PYTHON} src/twitter-listen.py "$@"
         ;;
-    submit)
-        export NLTK_DATA=${SERVICE_ROOT}/data/nltk_data
-        export PYSPARK_PYTHON=${SERVICE_ROOT}/vpython/bin/python
-        export SPARK_SUBMIT=${SERVICE_ROOT}/bin/${SPARK_RELEASE}/bin/spark-submit
+    twitter-community-crawl)
+        activate_vpython
         shift 1
-        exec ${SPARK_SUBMIT} "$@"
+        exec ${PYTHON} src/twitter-community-crawl.py "$@"
         ;;
 esac
