@@ -11,15 +11,14 @@ class ApiConfig(object):
         self.consumer_key = os.environ['TWITTER_CONSUMER_KEY']
         self.consumer_secret = os.environ['TWITTER_CONSUMER_SECRET']
         self.access_token = os.environ['TWITTER_ACCESS_TOKEN']
-        self.access_token_secret = os.environ['TWITTER_TOKEN_SECRET']
-
+        self.access_token_secret = os.environ['TWITTER_ACCESS_TOKEN_SECRET']
+        print('{} {} {} {}'.format(self.consumer_key, self.consumer_secret, self.access_token, self.access_token_secret))
 
 class ContentSource(object):
     def __init__(self, search=None):
         self.search = search
         self.twitter_min_likes = 0
         self.twitter_min_retweets = 0
-
 
 class PostItem(object):
     def __init__(self, url=None, created_at=None, score=None):
@@ -49,7 +48,7 @@ def html_extract(url):
 
 def content_hub_crawl(url):
     print('CRAWL-URL: {}'.format(url))
-    resp = requests.post('{CONTENT_HUB_URL}/api/content-hub/crawl'.format(**os.environ)., data={'url': url})
+    resp = requests.post('{CONTENT_HUB_URL}/api/content-hub/crawl'.format(**os.environ), data={'url': url})
     doc = resp.json()
     return doc
 
@@ -120,17 +119,18 @@ def get_twitter_post_items(content_source, max_age_days=5):
 def crawl_post_items(post_items):
     if post_items:
         for post_item in post_items:
-            check = content_hub_crawl(post_item.url)
+            #check = content_hub_crawl(post_item.url)
+            print(post_item.url)
 
 def main():
-    users = ['@kejames', '@vmontori', '@greg_folkers',  '@DianeEMeier']
+    twitter_users_string = os.environ['TWITTER_SEARCH_USERS']
+    users = twitter_users_string.split(' ')
 
     for user in users:
         source = ContentSource()
         source.search = user
         post_items = get_twitter_post_items(source)
         crawl_post_items(post_items)
-
 
 if __name__ == '__main__':
     main()

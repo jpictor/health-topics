@@ -3,3 +3,4 @@ tweepy
 pydash
 requests
 python-dotenv
+pyorient

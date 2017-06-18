@@ -1,27 +1,29 @@
+import os
 import json
 import tweepy
 import pydash
 import requests
+from dotenv import load_dotenv, find_dotenv
+load_dotenv(find_dotenv())
 
+class ApiConfig(object):
+    def __init__(self):
+        self.consumer_key = os.environ['TWITTER_CONSUMER_KEY']
+        self.consumer_secret = os.environ['TWITTER_CONSUMER_SECRET']
+        self.access_token = os.environ['TWITTER_ACCESS_TOKEN']
+        self.access_token_secret = os.environ['TWITTER_ACCESS_TOKEN_SECRET']
+        print('{} {} {} {}'.format(self.consumer_key, self.consumer_secret, self.access_token, self.access_token_secret))
 
-consumer_key = 'EXXJ3ygv659jwUoZuoBvuPZ7H'
-consumer_secret = 'ZsryqsdCIowimKA1Jv46a3OXcJ8QUohInNZoCgHAzfn6UKjqJo'
-access_token = '2195427973-6AkH2lhVbuBKst3v4xh9MH0nvSBs9htO7xs55Kj'
-access_token_secret = 'S1jqpQLCJZFwQn5D2O7GcEtc8k640adbxqaLyPqZAU3v4'
-content_hub_url = 'https://pictorlabs.com'
-
-
-auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-auth.set_access_token(access_token, access_token_secret)
+api_config = ApiConfig()
+auth = tweepy.OAuthHandler(api_config.consumer_key, api_config.consumer_secret)
+auth.set_access_token(api_config.access_token, api_config.access_token_secret)
 api = tweepy.API(auth)
-
 
 def content_hub_crawl(url):
     print('CRAWL-URL: {}'.format(url))
     resp = requests.post('{}/api/content-hub/crawl'.format(url), data={'url': url})
     doc = resp.json()
     return doc
-
 
 class MyStreamListener(tweepy.StreamListener):
     def on_data(self, data):
